@@ -1,9 +1,9 @@
+//! Imports
 const Express = require('express')
 const app = Express()
-
-//! Imports
 const controllers = require("./controllers")
 const dbConnection = require("./db")
+require("dotenv").config() //using the config() env method makes the items in the .env file globally available
 
 dbConnection.authenticate()
     .then(() => dbConnection.sync()) //Resolves the promise calls the sync method to sync all models to the database
