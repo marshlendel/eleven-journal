@@ -4,6 +4,8 @@
   "description": "\"Journal application to introduce Node, Express, and Sequelize\"",
   "main": "app.js",
   "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Marshall Brown",
