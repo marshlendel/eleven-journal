@@ -3,6 +3,7 @@ const { UniqueConstraintError } = require("sequelize")
 const {UserModel} = require("../models")  //Unpacking UserModel property out of the object in the index.js
 const User = require("../models/user")
 const jwt = require("jsonwebtoken")
+const bcrypt = require("bcryptjs")
 
 //the controller is responsible for checking if the properties from the request match the models' properties
 //! Register User
@@ -10,7 +11,8 @@ router.post("/register", async (req, res) => {
     try{
         let User = await UserModel.create({ //When we communicate with or queyr from our database, the action returns a promise, so gotta resolve n stuff
             email: req.body.email, 
-            password: req.body.password
+            password: bcrypt.hashSync(req.body.password, 13)
+            
         })
                             //Payload, signature (used to encode and decode), option (expires in 24 hrs)
         let token = jwt.sign({id: User.id}, process.env.JWT_SECRET, {expiresIn: 60 * 60 * 24})
@@ -43,17 +45,26 @@ router.post("/login", async (req, res) => {
             email: email
         }
     })
-    if(User) {
-        let token = jwt.sign({id: User.id}, process.env.JWT_SECRET, {expiresIn: 60 * 60 * 24})
+    if(User) {                                  //Password from login request,  Pulls password from database (if callback is omitted, it returns a boolean in a promise)
+        let passwordComparison = await bcrypt.compare(password, User.password)
 
-        res.status(200).json({
-            message: "User successfully logged in",
-            user: User,
-            sessionToken: token
-        })
+        if(passwordComparison) {
+            let token = jwt.sign({id: User.id}, process.env.JWT_SECRET, {expiresIn: 60 * 60 * 24})
+
+            res.status(200).json({
+                message: "User successfully logged in",
+                user: User,
+                sessionToken: token
+            })
+        }else {
+            res.status(401).json({
+                message: "Incorrect email or password"
+            })
+        }
+       
     } else {
         res.status(401).json({
-            message: "User not found"
+            message: "Incorrect email or password"
         })
     }
    } catch(err) {
