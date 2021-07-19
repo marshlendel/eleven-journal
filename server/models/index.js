@@ -1,4 +1,5 @@
 
 module.exports = {
-    UserModel: require("./user")
+    UserModel: require("./user"),
+    JournalModel: require("./journal")
 }
