@@ -1,7 +1,6 @@
 const router = require("express").Router()
 const { UniqueConstraintError } = require("sequelize")
 const {UserModel} = require("../models")  //Unpacking UserModel property out of the object in the index.js
-const User = require("../models/user")
 const jwt = require("jsonwebtoken")
 const bcrypt = require("bcryptjs")
 
